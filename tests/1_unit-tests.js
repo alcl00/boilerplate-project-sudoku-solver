@@ -21,13 +21,13 @@ suite('Unit Tests', () => {
         }) 
         test('81 characters, including invalid characters', function(done) {
             
-            chai.expect(() => solver.validate(invalidCharacters)).to.throw('Invalid characters in puzzle');
+            assert.throw(() => solver.validate(invalidCharacters), 'Invalid characters in puzzle')
             done();
         })
         test('Input not 81 characters long', function(done) {
 
-            chai.expect(() => solver.validate(inputTooShort)).to.throw('Expected puzzle to be 81 characters long');
-            chai.expect(() => solver.validate(inputTooLong)).to.throw('Expected puzzle to be 81 characters long');
+            assert.throw(() => solver.validate(inputTooShort), 'Expected puzzle to be 81 characters long');
+            assert.throw(() => solver.validate(inputTooLong), 'Expected puzzle to be 81 characters long');
 
             done();
         })
