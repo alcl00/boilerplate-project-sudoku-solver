@@ -35,13 +35,15 @@ class SudokuSolver {
     }
 
     let rowToSearch = this.sudokuBoard[row-1];
-
     
     for(let c = 0; c < 9; c++) {
-      if(rowToSearch[c] === value) {
-        return false;
+      if(c !== column-1){
+        if(rowToSearch[c] === value) {
+          return false;
+        }
       }
     }
+    
     return true;
   }
 
