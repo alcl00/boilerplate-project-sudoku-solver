@@ -112,7 +112,7 @@ suite('Unit Tests', () => {
         test('Invalid input', function(done){
             let invalidInput = '1.9..5.1.85.4....2432......1...69.83.9.....6.62.71...9......1945....4.37.4.3..6..';
             
-            chai.expect(() => solver.solve(invalidInput)).to.throw('Puzzle cannot be solved');
+            assert.throw(() => solver.solve(invalidInput), 'Puzzle cannot be solved')
             done();
         })
         test('Return correct result', function(done) {
