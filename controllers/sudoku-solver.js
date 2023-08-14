@@ -31,17 +31,17 @@ class SudokuSolver {
       row = this.characterToNumber(row);
 
     if(!this.validInput(row, column, value)) {
-      console.log("Invalid input")
       return false;
     }
 
     let rowToSearch = this.sudokuBoard[row-1];
+
+    
     for(let c = 0; c < 9; c++) {
       if(rowToSearch[c] === value) {
         return false;
       }
     }
-    
     return true;
   }
 
@@ -54,8 +54,10 @@ class SudokuSolver {
       return false;
     }
     for(let r = 1; r <= 9; r++) {
-      if(this.sudokuBoard[r-1][column-1] === value) {
-        return false;
+      if(r !== row){
+        if(this.sudokuBoard[r-1][column-1] === value) {
+          return false;
+        }
       }
     }
 
@@ -71,17 +73,27 @@ class SudokuSolver {
       console.log("input invalid")
       return false;
     }
-
+    let targetBoxValue = this.sudokuBoard[row-1][column-1]
+    if(targetBoxValue !== 0) {
+      if(targetBoxValue === value) {
+        return true;
+      }
+      else {
+        this.sudokuBoard[row-1][column-1] = 0;
+      }
+    }
     let r = Math.floor((row-1) / 3) * 3 + 1;
     let c = Math.floor((column-1)/3) * 3 + 1;
     for(let i = -1; i <= 1; i++) {
       for(let j = -1; j <= 1; j++) {
         if(this.sudokuBoard[r + i][c + j] === value) {
+          this.sudokuBoard[row-1][column-1] = targetBoxValue;
           return false;
         }
       }
     }
-
+    
+    this.sudokuBoard[row-1][column-1] = targetBoxValue;
     return true;
 
   }

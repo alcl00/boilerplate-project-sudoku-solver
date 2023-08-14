@@ -2,8 +2,8 @@
 
 const SudokuSolver = require('../controllers/sudoku-solver.js');
 
-module.exports = function (app) {
-  
+module.exports = function(app) {
+
   let solver = new SudokuSolver();
   let validRow = /[A-I]/
   let validColumn = /[1-9]/
@@ -11,13 +11,13 @@ module.exports = function (app) {
   let findConflicts = (puzzleString, row, column, value) => {
     let conflicts = [];
 
-    if(!solver.checkRowPlacement(puzzleString, row, column, value)) {
+    if (!solver.checkRowPlacement(puzzleString, row, column, value)) {
       conflicts.push("row")
     }
-    if(!solver.checkColPlacement(puzzleString, row, column, value)) {
+    if (!solver.checkColPlacement(puzzleString, row, column, value)) {
       conflicts.push("column")
     }
-    if(!solver.checkRegionPlacement(puzzleString, row, column, value)) {
+    if (!solver.checkRegionPlacement(puzzleString, row, column, value)) {
       conflicts.push("region")
     }
 
@@ -26,12 +26,23 @@ module.exports = function (app) {
 
   app.route('/api/check')
     .post((req, res) => {
-      if(!(req.body.puzzle && req.body.coordinate && req.body.value)) {
-        res.json({ error: 'Required field(s) missing'})
+      if (!(req.body.puzzle && req.body.coordinate && req.body.value)) {
+        res.json({ error: 'Required field(s) missing' })
         return;
       }
       try {
-        if(req.body.coordinate.length !== 2) {
+        
+        if(!(/[1-9]/.test(req.body.value))) {
+          res.json({ error: 'Invalid value' })
+          return
+        }
+        let value = parseInt(req.body.value);
+        if ((value < 1 || value > 9)) {
+          res.json({ error: 'Invalid value' })
+          return
+        }
+        
+        if (req.body.coordinate.length !== 2) {
           res.json({ error: 'Invalid coordinate' })
           return;
         }
@@ -39,49 +50,49 @@ module.exports = function (app) {
 
         solver.populateBoard(req.body.puzzle);
 
+        
         let row = req.body.coordinate.charAt(0);
         let column = req.body.coordinate.charAt(1);
-        if(!(validColumn.test(column) && validRow.test(row))) {
+        if (!(validColumn.test(column) && validRow.test(row))) {
           res.json({ error: 'Invalid coordinate' })
           return;
         }
 
-        if(req.body.value < 1 || req.body.value > 9) {
-          res.json({ error: 'Invalid value'})
-        }
+        let conflicts = findConflicts(req.body.puzzle, row, column, value);
 
-        let conflicts = findConflicts(req.body.puzzle, row, column, req.body.value);
-
-        if(conflicts.length !== 0) {
-          res.json({valid: false, conflict: conflicts});
+        if (conflicts.length !== 0) {
+          res.json({ valid: false, conflict: conflicts });
           return
         }
-        res.json({valid: true});
+        res.json({ valid: true });
 
       }
-      catch(err) {
-        res.json({error: err})
+      catch (err) {
+        res.json({ error: err })
       }
 
-      
-      
+
+
     });
-    
+
   app.route('/api/solve')
     .post((req, res) => {
-      if(!req.body.puzzle) {
+      if (!req.body.puzzle) {
         res.json({ error: 'Required field missing' })
+        return
       }
       else {
-        try{
+        try {
           solver.validate(req.body.puzzle);
           let solutionString = solver.solve(req.body.puzzle);
           res.json({ solution: solutionString });
+          return;
         }
-        catch(err) {
+        catch (err) {
           res.json({ error: err });
+          return;
         }
       }
-      
+
     });
 };
