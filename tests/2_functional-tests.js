@@ -7,7 +7,7 @@ chai.use(chaiHttp);
 
 suite('Functional Tests', () => {
 
-    let input = '5..91372.3...8.5.9.9.25..8.68.47.23...95..46.7.4.....5.2.......4..8916..85.72...3'
+    let input = '1.5..2.84..63.12.7.2..5.....9..1....8.2.3674.3.7.2..9.47...8..1..16....926914.37.'
     let solution = '135762984946381257728459613694517832812936745357824196473298561581673429269145378';
     suite('POST /api/solve => solve given puzzle string', function() {
         test('Valid puzzle string', function(done) {
@@ -69,7 +69,6 @@ suite('Functional Tests', () => {
                 assert.equal(res.status, 200);
                 assert.property(res.body, 'error', 'POST should return property error');
                 assert.equal(res.body.error, 'Expected puzzle to be 81 characters long');
-                done();
             })
 
             chai.request(server)
@@ -86,7 +85,7 @@ suite('Functional Tests', () => {
             })
         });
         test('Puzzle cannot be solved', function(done) {
-            let invalidInput = '59.91372.3...8.5.9.9.25..8.68.47.23...95..46.7.4.....5.2.......4..8916..85.72...3'
+            let invalidInput = '1.9..5.1.85.4....2432......1...69.83.9.....6.62.71...9......1945....4.37.4.3..6..'
 
             chai.request(server)
             .keepOpen()
@@ -97,7 +96,7 @@ suite('Functional Tests', () => {
             .end((err, res) => {
                 assert.equal(res.status, 200);
                 assert.property(res.body, 'error', 'POST should return property error');
-                assert.equal(res.body.error, 'Expected puzzle to be 81 characters long');
+                assert.equal(res.body.error, 'Puzzle cannot be solved');
                 done();
             })
         });
@@ -106,8 +105,8 @@ suite('Functional Tests', () => {
 
         //All fields
         test('All fields', function(done) {
-            let coordinate = 'C1';
-            let value = 1;
+            let coordinate = 'A1';
+            let value = 7;
             chai.request(server)
             .keepOpen()
             .post('/api/check')
@@ -126,8 +125,8 @@ suite('Functional Tests', () => {
         });
         // Check a puzzle placement with single placement conflict: POST request to /api/check
         test('Single placement conflict', function(done) {
-            let coordinate = 'C1';
-            let value = 6;
+            let coordinate = 'B1';
+            let value = 8;
             chai.request(server)
             .keepOpen()
             .post('/api/check')
@@ -149,8 +148,8 @@ suite('Functional Tests', () => {
         });
         // Check a puzzle placement with multiple placement conflicts: POST request to /api/check
         test('Multiple placement conflicts', function(done) {
-            let coordinate = 'C1';
-            let value = 9;
+            let coordinate = 'D1';
+            let value = 1;
             chai.request(server)
             .keepOpen()
             .post('/api/check')
@@ -172,8 +171,8 @@ suite('Functional Tests', () => {
         });
         // Check a puzzle placement with all placement conflicts: POST request to /api/check
         test('All placement conflicts', function(done){
-            let coordinate = 'C9';
-            let value = 9;
+            let coordinate = 'A2';
+            let value = 2;
             chai.request(server)
             .keepOpen()
             .post('/api/check')
@@ -245,7 +244,6 @@ suite('Functional Tests', () => {
                 assert.equal(res.status, 200)
                 assert.property(res.body, 'error', 'POST should return property error');
                 assert.equal(res.body.error, 'Expected puzzle to be 81 characters long');
-                done();
             })
             chai.request(server)
             .keepOpen()
@@ -285,7 +283,7 @@ suite('Functional Tests', () => {
         })
         // Check a puzzle placement with invalid placement value: POST request to /api/check
         test('Invalid placement value', function(done) {
-            let coordinate = 'Z1';
+            let coordinate = 'A1';
             let value = 20;
 
             chai.request(server)
@@ -299,7 +297,7 @@ suite('Functional Tests', () => {
             .end((err, res) => {
                 assert.equal(res.status, 200)
                 assert.property(res.body, 'error', 'POST should return property error');
-                assert.equal(res.body.error, 'Invalid coordinate');
+                assert.equal(res.body.error, 'Invalid value');
                 done();
             })
         })
